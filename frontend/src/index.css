@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🚀 BLOCKCHAIN SUPPLY CHAIN DESIGN SYSTEM 🚀 
+   Professional, futuristic design inspired by blockchain technology
+   All colors MUST be HSL for consistency.
+*/
+
+@layer base {
+  :root {
+    /* 🎨 CORE BLOCKCHAIN PALETTE */
+    --background: 220 27% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 98%;
+
+    /* 🔷 PRIMARY - Blockchain Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
+    --primary-glow: 217 91% 70%;
+
+    /* 🟢 SUCCESS - Verification Green */
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+    --success-glow: 142 76% 46%;
+
+    /* 🟡 WARNING - Pending Yellow */
+    --warning: 45 93% 58%;
+    --warning-foreground: 222 47% 6%;
+    --warning-glow: 45 93% 68%;
+
+    /* 🔴 DESTRUCTIVE - Error Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* 🎭 ROLE-SPECIFIC COLORS */
+    --manufacturer: 271 81% 56%;
+    --manufacturer-foreground: 210 40% 98%;
+    --manufacturer-glow: 271 81% 66%;
+
+    --distributor: 142 69% 58%;
+    --distributor-foreground: 210 40% 98%; 
+    --distributor-glow: 142 69% 68%;
+
+    --retailer: 25 95% 53%;
+    --retailer-foreground: 210 40% 98%;
+    --retailer-glow: 25 95% 63%;
+
+    --admin: 348 83% 47%;
+    --admin-foreground: 210 40% 98%;
+    --admin-glow: 348 83% 57%;
+
+    /* 🌈 BEAUTIFUL GRADIENTS */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--success-glow)));
+    --gradient-manufacturer: linear-gradient(135deg, hsl(var(--manufacturer)), hsl(var(--manufacturer-glow)));
+    --gradient-distributor: linear-gradient(135deg, hsl(var(--distributor)), hsl(var(--distributor-glow)));
+    --gradient-retailer: linear-gradient(135deg, hsl(var(--retailer)), hsl(var(--retailer-glow)));
+    --gradient-admin: linear-gradient(135deg, hsl(var(--admin)), hsl(var(--admin-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%), hsl(271 81% 56%), hsl(142 69% 58%));
+
+    /* ✨ ELEGANT EFFECTS */
+    --shadow-primary: 0 10px 30px -5px hsl(var(--primary) / 0.3);
+    --shadow-success: 0 10px 30px -5px hsl(var(--success) / 0.3);
+    --shadow-glow: 0 0 50px hsl(var(--primary-glow) / 0.4);
+    --shadow-elegant: 0 20px 40px -10px hsl(220 27% 4% / 0.5);
+
+    /* 🎬 SMOOTH ANIMATIONS */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --secondary: 217 19% 15%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 19% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 19% 15%;
+    --accent-foreground: 210 40% 98%;
+
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    /* 📱 SIDEBAR SYSTEM */
+    --sidebar-background: 220 27% 4%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 19% 15%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 17%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(217 91% 60% / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(271 81% 56% / 0.1) 0%, transparent 50%);
+  }
+
+  /* 🎭 ROLE-BASED UTILITY CLASSES */
+  .role-manufacturer { @apply bg-gradient-to-r from-purple-600 to-purple-400 text-white; }
+  .role-distributor { @apply bg-gradient-to-r from-emerald-600 to-emerald-400 text-white; }
+  .role-retailer { @apply bg-gradient-to-r from-orange-600 to-orange-400 text-white; }
+  .role-admin { @apply bg-gradient-to-r from-rose-600 to-rose-400 text-white; }
+
+  /* ✨ BEAUTIFUL ANIMATIONS */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-blockchain {
+    animation: blockchain-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    from { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+    to { box-shadow: 0 0 40px hsl(var(--primary) / 0.6); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes blockchain-pulse {
+    0%, 100% { 
+      transform: scale(1);
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+    50% { 
+      transform: scale(1.05);
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+    }
+  }
+
+  /* 🎨 STATUS COLORS */
+  .status-created { @apply bg-blue-500/10 text-blue-400 border-blue-500/20; }
+  .status-readyforshipping { @apply bg-purple-500/10 text-purple-400 border-purple-500/20; }
+  .status-shipped { @apply bg-yellow-500/10 text-yellow-400 border-yellow-500/20; }
+  .status-intransit { @apply bg-orange-500/10 text-orange-400 border-orange-500/20; }
+  .status-deliveredtoretailer { @apply bg-emerald-500/10 text-emerald-400 border-emerald-500/20; }
+  .status-availableforsale { @apply bg-cyan-500/10 text-cyan-400 border-cyan-500/20; }
+  .status-sold { @apply bg-green-500/10 text-green-400 border-green-500/20; }
+  .status-recalled { @apply bg-red-500/10 text-red-400 border-red-500/20; }
+
+  /* 🌟 GLASS MORPHISM */
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  }
+
+  .glass-strong {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20;
+  }
+}
