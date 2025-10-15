@@ -1,6 +1,3 @@
-// 📝 BEAUTIFUL REGISTRATION PAGE
-// Professional registration with role selection and validation
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,7 +47,6 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* 🌟 Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-success/5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,rgba(34,197,94,0.1),rgba(255,255,255,0))]" />
         {/* Floating Elements */}
@@ -86,7 +82,6 @@ export const RegisterPage: React.FC = () => {
       >
         <Card className="glass-strong border-success/20 shadow-elegant">
           <CardHeader className="text-center space-y-4">
-            {/* 🔷 Logo & Branding */}
             <motion.div 
               className="mx-auto w-20 h-20 bg-gradient-success rounded-2xl flex items-center justify-center shadow-success"
               whileHover={{ scale: 1.05, rotate: 5 }}
@@ -268,7 +263,7 @@ export const RegisterPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* 🌟 Security Features */}
+        {/*  Security Features */}
         <motion.div 
           className="mt-8 text-center space-y-3"
           initial={{ opacity: 0 }}

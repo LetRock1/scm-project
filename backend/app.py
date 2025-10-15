@@ -4,6 +4,7 @@ from config import SECRET_KEY, JWT_SECRET_KEY, DATABASE_URL, FRONTEND_PUBLIC_BAS
 from db import db
 from flask_jwt_extended import JWTManager
 from blockchain import Blockchain
+from flask import redirect
 import os
 
 def create_app():
@@ -41,6 +42,15 @@ def create_app():
     @app.route("/")
     def home():
         return {"message": "SCM Blockchain Backend running"}
+    
+
+    @app.route("/verify/<product_id>")
+    def redirect_to_frontend(product_id):
+        LOCAL_IP = "10.122.180.147"  
+        FRONTEND_PORT = 5173          
+    # When QR code is scanned, Flask will redirect to frontend verify page
+        frontend_url = f"http://{LOCAL_IP}:{FRONTEND_PORT}/verify/{product_id}"
+        return redirect(frontend_url)
 
     return app
 

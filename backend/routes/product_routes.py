@@ -9,6 +9,9 @@ import io
 import base64
 import csv
 from sqlalchemy import desc, asc, or_, and_
+from flask import current_app
+LOCAL_IP = "10.122.180.147"       # your IPv4 from ipconfig
+
 
 bp = Blueprint("products", __name__, url_prefix="/api/products")
 
@@ -75,11 +78,16 @@ def create_product():
       base_url = f"{scheme}://{host}"
     # Pass backend base to frontend via query param to ensure phone uses correct API host
     backend_base = current_app.config.get("BACKEND_PUBLIC_BASE_URL") or base_url
-    qr_data = f"{base_url}/verify/{pid}?api_base_url={backend_base}"
+    import socket
+    #generate full local URL for QR code
+    FRONTEND_PORT = 5173              # Vite’s default React port
+    API_BASE = f"http://{LOCAL_IP}:5000"
+    qr_data = f"http://{LOCAL_IP}:{FRONTEND_PORT}/verify/{pid}?api_base_url={API_BASE}"
     img = qrcode.make(qr_data)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     qr_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+
 
     return jsonify({
         "message": "Product created successfully", "product": product.to_dict(),
@@ -142,9 +150,11 @@ def explicit_custody_transfer():
 @bp.route("/<product_id>", methods=["GET"])
 @jwt_required(optional=True)
 def get_product(product_id):
+    include_history = request.args.get("include_history", "false").lower() in ("1", "true", "yes")
     p = Product.query.filter_by(product_id=product_id).first()
-    if not p: return jsonify({"error": "not found"}), 404
-    return jsonify(p.to_dict()), 200
+    if not p:
+        return jsonify({"error": "not found"}), 404
+    return jsonify(p.to_dict(include_history=include_history)), 200
 
 @bp.route("/", methods=["GET"])
 @jwt_required()
@@ -250,14 +260,14 @@ def verify_blockchain():
 @jwt_required(optional=True)
 def get_product_qrcode(product_id):
     product = Product.query.filter_by(product_id=product_id).first()
-    if not product: return jsonify({"error": "product not found"}), 404
-    base_url = current_app.config.get("FRONTEND_PUBLIC_BASE_URL")
-    if not base_url:
-      scheme = request.headers.get('X-Forwarded-Proto', request.scheme)
-      host = request.headers.get('X-Forwarded-Host', request.host)
-      base_url = f"{scheme}://{host}"
-    backend_base = current_app.config.get("BACKEND_PUBLIC_BASE_URL") or base_url
+    if not product:
+        return jsonify({"error": "product not found"}), 404
+    FRONTEND_PORT = 5173
+    BACKEND_PORT = 5000
+    base_url = f"http://{LOCAL_IP}:{FRONTEND_PORT}"
+    backend_base = f"http://{LOCAL_IP}:{BACKEND_PORT}"
     qr_data = f"{base_url}/verify/{product_id}?api_base_url={backend_base}"
+    # generate PNG QR image
     img = qrcode.make(qr_data)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -269,16 +279,58 @@ def get_product_qrcode(product_id):
 def get_product_history_from_blockchain(product_id):
     """
     Provides the product's full, verified history directly from the blockchain.
+    Normalizes field names so frontend always receives:
+      { status, by, timestamp, latitude, longitude, raw_block_index }
     """
     product = Product.query.filter_by(product_id=product_id).first()
-    if not product: return jsonify({"error": "Product not found"}), 404
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
     bc = current_app.config["BLOCKCHAIN"]
+    # get blocks related to this product
     product_history_blocks = [
-        b.to_dict() for b in bc.chain 
+        b.to_dict() for b in bc.chain
         if isinstance(b.data, dict) and b.data.get("product_id") == product_id
     ]
-    timeline = [block['data'] for block in product_history_blocks]
-    
+
+    timeline = []
+    for block in product_history_blocks:
+        data = block.get("data", {}) or {}
+
+        # normalize fields
+        status = data.get("status") or data.get("action") or data.get("type")
+        by = (
+    data.get("by")
+    or data.get("by_who")
+    or data.get("actor")
+    or data.get("username")
+    or data.get("owner")
+    or data.get("initial_custodian")
+)
+        # prefer timestamp in data, otherwise use the block timestamp
+        timestamp = data.get("timestamp") if data.get("timestamp") is not None else block.get("timestamp")
+        latitude = data.get("latitude") if "latitude" in data else None
+        longitude = data.get("longitude") if "longitude" in data else None
+
+        # also parse location fields stored as "lat,lon"
+        loc = data.get("location")
+        if (latitude is None or longitude is None) and loc:
+            try:
+                lat_s, lon_s = str(loc).split(",")
+                latitude = float(lat_s) if lat_s not in ("", "N/A", None) else None
+                longitude = float(lon_s) if lon_s not in ("", "N/A", None) else None
+            except Exception:
+                pass
+
+        timeline.append({
+            "status": status,
+            "by": by,
+            "timestamp": timestamp,
+            "latitude": latitude,
+            "longitude": longitude,
+            "raw_block_index": block.get("index")
+        })
+
     valid, msg = (False, "Validation method not found")
     if hasattr(bc, "is_valid_chain"):
         valid, msg = bc.is_valid_chain()
